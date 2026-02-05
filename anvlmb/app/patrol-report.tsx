@@ -23,24 +23,36 @@ export default function PatrolReportScreen() {
         return val;
     };
 
+    const { getRouteById, updatePatrolStatus } = usePatrol();
+    const routeId = parseString(params.routeId, '');
+    const currentRoute = getRouteById(routeId);
+
+    // Check if we are in history mode (Read-only)
+    const isHistory = currentRoute?.status === 'ĐÃ BÁO CÁO';
+
     // Parse params or use defaults
     const distance = parseString(params.distance, '1.2km');
-    const gpsUpdates = parseParam(params.updates, 10);
     const incidents = parseParam(params.incidents, 0);
     const duration = parseString(params.duration, '32m');
 
-    const { updatePatrolStatus } = usePatrol();
-    const routeId = parseString(params.routeId, '');
     const [showExitPopup, setShowExitPopup] = useState(false);
     const [showSignaturePopup, setShowSignaturePopup] = useState(false);
-    const [isSigned, setIsSigned] = useState(false);
-    const [userNotes, setUserNotes] = useState('Lộ trình tuần tra thực tế đã được ghi nhận và đối soát với kế hoạch từ TTCH. Toàn bộ tín hiệu GPS (30s/lần) đã được gửi thành công.');
+    const [isSigned, setIsSigned] = useState(isHistory);
+    const [userNotes, setUserNotes] = useState(currentRoute?.notes || 'Lộ trình tuần tra thực tế đã được ghi nhận và đối soát với kế hoạch từ TTCH. Toàn bộ tín hiệu GPS (30s/lần) đã được gửi thành công.');
 
     const handleBackPress = () => {
-        setShowExitPopup(true);
+        if (isHistory) {
+            router.back();
+        } else {
+            setShowExitPopup(true);
+        }
     };
 
     const handleSubmit = () => {
+        if (isHistory) {
+            router.back();
+            return;
+        }
         if (!isSigned) {
             alert('Vui lòng ký xác nhận báo cáo trước khi gửi.');
             return;
@@ -57,7 +69,14 @@ export default function PatrolReportScreen() {
                 <TouchableOpacity onPress={handleBackPress}>
                     <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Báo cáo Kết thúc Ca</Text>
+                <View style={{ flex: 1 }}>
+                    <Text style={styles.headerTitle}>{isHistory ? 'Lịch sử Tuần tra' : 'Báo cáo Kết thúc Ca'}</Text>
+                    {isHistory && (
+                        <View style={[styles.statusBadge, { backgroundColor: colors.safe + '20' }]}>
+                            <Text style={[styles.statusTextBadge, { color: colors.safe }]}>ĐÃ BÁO CÁO</Text>
+                        </View>
+                    )}
+                </View>
             </View>
 
             <View style={styles.summaryCard}>
@@ -111,10 +130,11 @@ export default function PatrolReportScreen() {
 
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Ghi chú tổng kết</Text>
-                <View style={styles.noteBox}>
+                <View style={[styles.noteBox, isHistory && styles.noteBoxReadOnly]}>
                     <TextInput
                         style={styles.noteInput}
                         multiline
+                        editable={!isHistory}
                         placeholder="Nhập ghi chú tổng kết tại đây..."
                         placeholderTextColor={colors.muted}
                         value={userNotes}
@@ -130,7 +150,8 @@ export default function PatrolReportScreen() {
                         styles.signatureBox,
                         isSigned && styles.signatureBoxConfirmed
                     ]}
-                    onPress={() => setShowSignaturePopup(true)}
+                    onPress={() => !isHistory && setShowSignaturePopup(true)}
+                    disabled={isHistory}
                 >
                     {isSigned ? (
                         <View style={styles.confirmedContent}>
@@ -138,7 +159,7 @@ export default function PatrolReportScreen() {
                                 <Ionicons name="checkmark" size={20} color="#fff" />
                             </View>
                             <Text style={styles.signatureConfirmedText}>NHÂN VIÊN 042 ĐÃ XÁC NHẬN</Text>
-                            <Text style={styles.signatureStatusLabel}>Đã ký lúc 14:40</Text>
+                            <Text style={styles.signatureStatusLabel}>{isHistory ? 'Đã xác thực số' : 'Đã ký lúc 14:40'}</Text>
                         </View>
                     ) : (
                         <View style={styles.unconfirmedContent}>
@@ -151,10 +172,12 @@ export default function PatrolReportScreen() {
             </View>
 
             <TouchableOpacity
-                style={styles.submitButton}
+                style={[styles.submitButton, isHistory && styles.closeButton]}
                 onPress={handleSubmit}
             >
-                <Text style={styles.submitButtonText}>GỬI BÁO CÁO & KẾT THÚC</Text>
+                <Text style={[styles.submitButtonText, isHistory && styles.closeButtonText]}>
+                    {isHistory ? 'ĐÓNG TÓM TẮT' : 'GỬI BÁO CÁO & KẾT THÚC'}
+                </Text>
             </TouchableOpacity>
 
             <ConfirmationPopup
@@ -206,6 +229,18 @@ const dynamicStyles = (colors: any) => StyleSheet.create({
         fontSize: 22,
         fontWeight: 'bold',
         color: colors.text,
+    },
+    statusBadge: {
+        paddingHorizontal: 8,
+        paddingVertical: 2,
+        borderRadius: 6,
+        alignSelf: 'flex-start',
+        marginTop: 4,
+    },
+    statusTextBadge: {
+        fontSize: 10,
+        fontWeight: 'bold',
+        letterSpacing: 0.5,
     },
     summaryCard: {
         backgroundColor: colors.surface,
@@ -284,6 +319,10 @@ const dynamicStyles = (colors: any) => StyleSheet.create({
         borderWidth: 1,
         borderColor: colors.text + '0D',
     },
+    noteBoxReadOnly: {
+        backgroundColor: 'transparent',
+        borderStyle: 'dashed',
+    },
     noteInput: {
         color: colors.text,
         fontSize: 14,
@@ -359,5 +398,13 @@ const dynamicStyles = (colors: any) => StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 16,
         letterSpacing: 1,
+    },
+    closeButton: {
+        backgroundColor: colors.surface,
+        borderWidth: 1,
+        borderColor: colors.text + '20',
+    },
+    closeButtonText: {
+        color: colors.text,
     }
 });

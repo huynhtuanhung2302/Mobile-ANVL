@@ -39,6 +39,7 @@ export default function AlertDetailScreen() {
         building = 'Tòa nhà chính',
         floor = 'Tầng trệt',
         note = 'Không có ghi chú bổ sung.',
+        iocNote,
         status: initialStatus, // From params
         mediaUri
     } = params;
@@ -180,9 +181,22 @@ export default function AlertDetailScreen() {
                     <View style={[styles.glassCard, { borderColor: colors.primary + '40' }]}>
                         <View style={styles.cardHeader}>
                             <Ionicons name="shield-checkmark" size={16} color={colors.primary} />
-                            <Text style={styles.cardHeaderText}>CHỈ THỊ VẬN HÀNH (IOC)</Text>
+                            <Text style={styles.cardHeaderText}>NỘI DUNG XỬ LÝ</Text>
                         </View>
-                        <Text style={styles.noteText}>{note?.toString() || 'Không có ghi chú bổ sung.'}</Text>
+                        <Text style={styles.noteText}>{liveAlert?.description || note?.toString() || 'Không có ghi chú bổ sung.'}</Text>
+
+                        {(liveAlert?.iocNote || iocNote) && (
+                            <>
+                                <View style={{ height: 1, backgroundColor: colors.muted + '20', marginVertical: 12 }} />
+                                <View style={styles.cardHeader}>
+                                    <Ionicons name="document-text" size={16} color={colors.primary} />
+                                    <Text style={styles.cardHeaderText}>GHI CHÚ</Text>
+                                </View>
+                                <Text style={[styles.noteText, { fontSize: 14, opacity: 0.8 }]}>
+                                    {liveAlert?.iocNote || iocNote?.toString()}
+                                </Text>
+                            </>
+                        )}
                     </View>
 
                     {/* MOCK WEB CONTROL */}

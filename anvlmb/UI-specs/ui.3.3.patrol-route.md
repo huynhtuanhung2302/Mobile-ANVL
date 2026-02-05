@@ -41,6 +41,6 @@
 - **Screen File:** `app/(tabs)/patrol.tsx` & `app/patrol-details.tsx`.
 - **Navigation Payload:**
     - `patrol.tsx` -> `patrol-details.tsx`: `{ routeId, routeName }` (Khi status là ĐANG THỰC HIỆN).
-    - `patrol.tsx` -> `patrol-history-detail.tsx`: `{ routeId, routeName }` (Khi status là HOÀN THÀNH).
-    - `patrol-details.tsx` -> `patrol-report.tsx`: `{ total, completed, incidents, duration }`.
+    - `patrol.tsx` -> `patrol-report.tsx`: `{ routeId, routeName }` (Khi status là HOÀN THÀNH hoặc ĐÃ BÁO CÁO).
+    - `patrol-details.tsx` -> `patrol-report.tsx`: `{ routeId, distance, updates, incidents, duration }`.
 - **Note:** Plan ID tuyệt đối không hiển thị trong danh sách hoặc chi tiết tuyến tác chiến.

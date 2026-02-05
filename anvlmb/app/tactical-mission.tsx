@@ -85,9 +85,20 @@ export default function TacticalMissionScreen() {
                     <View style={[styles.iocNoteBox, { backgroundColor: colors.primary + '10' }]}>
                         <View style={styles.iocHeader}>
                             <Ionicons name="information-circle" size={14} color={colors.primary} />
-                            <Text style={[styles.iocLabel, { color: colors.primary }]}>TÓM TẮT TỪ IOC</Text>
+                            <Text style={[styles.iocLabel, { color: colors.primary }]}>NỘI DUNG XỬ LÝ</Text>
                         </View>
                         <Text style={[styles.descriptionText, { color: colors.text }]}>{alert.description || 'Tiếp cận hiện trường và xác minh tình hình.'}</Text>
+
+                        {alert.iocNote && (
+                            <>
+                                <View style={[styles.dividerBriefing, { marginVertical: 12, height: 0.5, opacity: 0.3 }]} />
+                                <View style={styles.iocHeader}>
+                                    <Ionicons name="document-text" size={14} color={colors.primary} />
+                                    <Text style={[styles.iocLabel, { color: colors.primary }]}>GHI CHÚ</Text>
+                                </View>
+                                <Text style={[styles.descriptionText, { color: colors.text, fontSize: 13, opacity: 0.8 }]}>{alert.iocNote}</Text>
+                            </>
+                        )}
                     </View>
                 </View>
 
@@ -175,6 +186,7 @@ const styles = StyleSheet.create({
     backBtn: { padding: 4 },
     headerTitleContainer: { flex: 1, marginLeft: 12 },
     headerSubtitle: { fontSize: 10, fontWeight: '800', letterSpacing: 1 },
+    headerTitle: { fontSize: 16, fontWeight: '800' },
     headerRight: { width: 32 },
     scrollView: { flex: 1 },
     scrollContent: { padding: 16, gap: 16 },

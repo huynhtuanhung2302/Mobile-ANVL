@@ -10,6 +10,7 @@ export interface AlertData {
     status: AlertStatus; // New field
     title: string;
     description?: string;
+    iocNote?: string; // New field from IOC
     location: {
         zone: string;
         building: string;
@@ -46,6 +47,7 @@ export function AlertQueueProvider({ children }: { children: React.ReactNode }) 
             status: 'UNPROCESSED',
             title: 'Phát hiện xâm nhập Khu A',
             description: 'Đối tượng leo rào tại phía Tây. Cảnh báo mới chưa có người nhận!',
+            iocNote: 'Yêu cầu lực lượng phản ứng nhanh tiếp cận và bắt giữ đối tượng.',
             location: { zone: 'Khu A', building: 'Nhà kho 1', floor: 'Tầng 1' },
             timestamp: Date.now() - 1000 * 60 * 5, // 5 mins ago
         },
@@ -56,6 +58,7 @@ export function AlertQueueProvider({ children }: { children: React.ReactNode }) 
             status: 'UNPROCESSED',
             title: 'Báo cháy Khu C',
             description: 'Cảm biến khói tại kho hóa chất. Cảnh báo mới chưa có người nhận!',
+            iocNote: 'Sử dụng bình cứu hỏa tại chỗ và chuẩn bị vòi phun nếu cần.',
             location: { zone: 'Khu C', building: 'Xưởng sản xuất', floor: 'Tầng 2' },
             timestamp: Date.now() - 1000 * 60 * 2, // 2 mins ago
         },
@@ -96,6 +99,7 @@ export function AlertQueueProvider({ children }: { children: React.ReactNode }) 
             status: 'REPORTED',
             title: 'Mất kết nối Cam #14',
             description: 'Camera cổng bảo vệ mất tín hiệu. Đã gửi báo cáo kỹ thuật chờ xử lý từ Web.',
+            iocNote: 'Kiểm tra đường dây tín hiệu và nguồn điện camera.',
             location: { zone: 'Cổng chính', building: 'Trạm gác', floor: 'Ngoài trời' },
             timestamp: Date.now() - 1000 * 60 * 60, // 1 hour ago
         },

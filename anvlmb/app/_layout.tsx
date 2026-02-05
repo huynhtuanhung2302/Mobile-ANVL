@@ -63,7 +63,6 @@ function NavigationThemeWrapper() {
         {/* <Stack.Screen name="maintenance-list" options={{ headerShown: false }} /> */}
         {/* <Stack.Screen name="alert-list" options={{ headerShown: false }} /> */}
         <Stack.Screen name="patrol-details" options={{ headerShown: false }} />
-        <Stack.Screen name="patrol-history-detail" options={{ headerShown: false }} />
         <Stack.Screen name="patrol-incidents-summary" options={{ headerShown: false }} />
         <Stack.Screen name="patrol-location-log" options={{ headerShown: false }} />
         <Stack.Screen name="patrol-report" options={{ headerShown: false }} />

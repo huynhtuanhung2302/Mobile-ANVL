@@ -8,17 +8,17 @@
 ## 2. Luồng nghiệp vụ (Business Flow)
 - **Điểm bắt đầu (Entry):** Nhấn vào Tab "Cảnh báo" trên thanh menu chính.
 - **Hành động:** 
-    - Xem danh sách các cảnh báo (Alerts) theo 4 trạng thái:
+    - Xem danh sách các cảnh báo (Alerts) theo 5 trạng thái:
+        - **Tất cả (ALL):** Màu xám/văn bản. Lấy toàn bộ tin để đối soát.
         - **Đã tiếp nhận (RECEIVED):** Màu Đỏ (Danger). Nhiệm vụ đang thực hiện.
         - **Chờ tiếp nhận (UNPROCESSED):** Màu Cam (Warning). Các sự vụ chưa có người nhận.
         - **Đã báo cáo (REPORTED):** Màu Xanh dương (Primary). Đang chờ TTCH xác nhận đóng.
         - **Kết thúc (FINISHED):** Màu Xanh lá (Safe). Nhật ký các sự vụ đã hoàn tất.
-    - Lọc nhanh qua hệ thống 4 Tab ngang.
-    - Nhấn vào một cảnh báo để thực hiện hành động tiếp theo tùy trạng thái.
+    - Lọc nhanh qua hệ thống 5 Tab ngang.
+    - Nhấn vào một cảnh báo để thực hiện hành động tiếp theo tùy trạng thái của chính item đó (không phụ thuộc vào tab đang chọn).
 - **Giao diện Nút bấm (Action Buttons):**
     - **Tab Đã tiếp nhận**: 
         - Nút chính (Đỏ): **ĐẾN DẪN ĐƯỜNG** (Icon: `navigate`).
-        - Nút phụ (Outlined): **CHI TIẾT** (Icon: `information-circle`).
     - **Tab Chờ tiếp nhận**: Nút **XEM CHI TIẾT** (Cam, Icon: `eye`).
     - **Tab Đã báo cáo/Kết thúc**: Nút **XEM BÁO CÁO** (Xanh dương/Xanh lá, Icon: `document-text`).
 - **Luồng Điều hướng Thông minh:**
@@ -29,7 +29,7 @@
 ## 3. Layout & Composition
 - **Header:** Tiêu đề "DANH SÁCH CẢNH BÁO".
 - **Tab Bar (Top):** 
-    - 4 Tab ngang: **CHỜ TIẾP NHẬN** (Vàng) | **ĐÃ TIẾP NHẬN** (Đỏ) | **ĐÃ BÁO CÁO** (Xanh dương) | **KẾT THÚC** (Xanh lá).
+    - 5 Tab ngang: **TẤT CẢ** | **CHỜ TIẾP NHẬN** (Vàng) | **ĐÃ TIẾP NHẬN** (Đỏ) | **ĐÃ BÁO CÁO** (Xanh dương) | **KẾT THÚC** (Xanh lá).
     - **Default:** Luôn mặc định mở tab **CHỜ TIẾP NHẬN**.
     - Style: Pill-based bo tròn với màu sắc đại diện cho từng tab.
 - **List Item (Card):**

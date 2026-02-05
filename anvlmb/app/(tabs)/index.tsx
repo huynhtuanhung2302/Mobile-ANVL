@@ -289,7 +289,7 @@ export default function HomeScreen() {
                   } as any);
                 } else if (route.status === 'ĐÃ BÁO CÁO') {
                   router.push({
-                    pathname: '/patrol-history-detail',
+                    pathname: '/patrol-report',
                     params: { routeId: route.id, routeName: route.name }
                   } as any);
                 }

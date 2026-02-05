@@ -17,9 +17,13 @@
 - **Story 1.3: Dashboard ID & Counter**: Hiển thị hồ sơ & widget trạng thái.
 - **Story 1.4: Dashboard Mini-Map**: Bản đồ nhỏ định vị nhân viên.
 - **Story 1.5: Dashboard Patrol Hero**: Hiển thị ưu tiên thẻ ca tuần tra thông minh. Chỉ hiện lịch ngày mai khi hôm nay đã hoàn thành hoặc không có lịch. Ẩn các ca đã hoàn thành để tối ưu không gian tác chiến.
+- **Story 1.6: Active Mission Banner**: HUD đỏ cố định hiển thị nhiệm vụ RECEIVED.
+- **Story 1.7: Thay đổi Mật khẩu**: Tự quản lý bảo mật cá nhân.
+- **Story 1.8: Tùy chỉnh Theme**: Chuyển đổi Sáng/Tối/Hệ thống.
+- **Story 1.9: Chính sách Bảo mật**: Tra cứu điều khoản sử dụng & bảo vệ dữ liệu.
 
 ### EPIC 2: Hệ thống Cảnh báo & Công việc (Incident Management)
-- **Story 2.1: Alert List UI**: Phân loại 4 trạng thái & tab bộ lọc.
+- **Story 2.1: Alert List UI**: Phân loại 5 trạng thái (bao gồm tab TẤT CẢ để đối soát) & tab bộ lọc.
 - **Story 2.2: MQTT Real-time**: Đồng bộ dữ liệu sự vụ tức thời.
 - **Story 2.3: Tactical Mission UI**: Giao diện tác chiến tích hợp Bản đồ, Unified Briefing Card và Media.
 - **Story 2.4: Phản ứng Sự vụ & Lifecycle**: Quy trình Tiếp nhận, Xử lý và Báo cáo kết quả.
@@ -39,15 +43,15 @@
 - **Story 5.1: GPS Tracking**: Ghi nhật ký tọa độ tự động (Heartbeat).
 - **Story 5.2: Lịch trình Đa ngày (Multi-day)**: Quản lý công việc theo dòng thời gian. Hỗ trợ 4 trạng thái: Chưa thực hiện, Đang thực hiện, Hoàn thành, Đã báo cáo.
 - **Story 5.3: Báo cáo Sự cố Phát sinh**: Chụp ảnh & GPS sự cố tự phát sinh.
-- **Story 5.4: Tổng kết & Đóng ca**: Thống kê ca trực, hỗ trợ nhập ghi chú động, xem nhật ký GPS và tóm tắt sự cố. Yêu cầu xác nhận chữ ký nhân viên (có phản hồi UI) trước khi gửi.
-- **Story 5.5: Xem lại Lịch sử Tuần tra (Unified Flow)**: Truy cập báo cáo tóm tắt (Read-only).
-- **Story 5.6: Tổng hợp Sự cố theo Ca**: Xem danh sách chi tiết các sự cố đã báo cáo trong một ca tuần tra cụ thể.
-- **Story 5.7: Ghi nhận Bắt đầu (Start Behavior)**: Track hành vi bắt đầu thực tế so với lịch trình.
+- **Story 5.4: Tổng kết & Lịch sử (Unified Flow)**: Thống kê ca trực, hỗ trợ nhập ghi chú động, xem nhật ký GPS và tóm tắt sự cố. Tự động chuyển đổi giữa chế độ Báo cáo (Cần chữ ký) và Lịch sử (Read-only) dựa trên trạng thái.
+- **Story 5.5: Tổng hợp Sự cố theo Ca**: Xem danh sách chi tiết các sự cố đã báo cáo trong một ca tuần tra cụ thể.
+- **Story 5.6: Ghi nhận Bắt đầu (Start Behavior)**: Track hành vi bắt đầu thực tế so với lịch trình.
+- **Story 5.7: Nhật ký vị trí & Tín hiệu GPS**: Tra cứu chi tiết từng điểm di chuyển và độ chính xác tín hiệu.
 
 ### PHÁT TRIỂN TRONG TƯƠNG LAI (PHASE 2+)
-- **Story 6.1: SOS Toàn cục**: Nhấn giữ 3s để kích hoạt báo động từ mọi màn hình.
-- **Story 6.2: Báo cáo Sự cố Thiết bị/Hạ tầng**: Ghi nhận hư hỏng thiết bị kỹ thuật/hạ tầng (QR Code support).
-- **Story 6.3: Quản lý Bảo trì (Tickets)**: Tiếp nhận và xử lý các yêu cầu sửa chữa thiết bị kỹ thuật.
+- **Story 6.1: SOS Toàn cục (Global Panic)**: Nút nổi báo động khẩn cấp (3s press) gửi tín hiệu kèm vị trí GPS và kích hoạt chế độ Emergency toàn hệ thống.
+- **Story 6.2: Báo cáo Sự cố Thiết bị/Hạ tầng**: Quy trình quét mã QR, chụp ảnh và phân loại hư hỏng thiết bị kỹ thuật để chuyển tiếp đội bảo trì.
+- **Story 6.3: Quản lý Bảo trì (Tickets)**: Tiếp nhận, lộ trình dẫn đường và xử lý các phiếu công việc kỹ thuật dành cho lực lượng phản ứng nhanh (First Responder).
 
 ## 4. Yêu cầu Phi chức năng (Non-functional Requirements)
 

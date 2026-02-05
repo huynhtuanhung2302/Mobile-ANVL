@@ -32,7 +32,7 @@
 | :--- | :--- | :--- | :--- |
 | UI_DTL_01 | Media Preview | Container hiển thị ảnh/video | Aspect Ratio 16:9 |
 | UI_DTL_02 | Info Card | Thẻ chứa tóm tắt thông tin | Nền Surface, bo góc 16px |
-| UI_DTL_03 | Note Box | Box chứa nội dung điều phối | Nền mờ, Font Italic |
+| UI_DTL_03 | Note Box | Box chứa nội dung xử lý và ghi chú | Nền mờ, Font Italic |
 | UI_DTL_04 | Primary Button | Nút "ĐÃ HIỂU" | Màu Primary của theme |
 
 ## 6. Hỗ trợ Đa nhiệm

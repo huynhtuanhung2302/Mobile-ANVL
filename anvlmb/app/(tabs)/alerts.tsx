@@ -8,6 +8,8 @@ import { useMission } from '@/ctx/MissionContext';
 
 // No static alerts here anymore, using live data from context
 
+export type AlertTab = AlertStatus | 'ALL';
+
 export default function AlertsTabScreen() {
     const { colors } = useAppTheme();
     const { queue } = useAlertQueue();
@@ -15,24 +17,25 @@ export default function AlertsTabScreen() {
     const params = useLocalSearchParams();
     const styles = dynamicStyles(colors);
 
-    // Default to 'RECEIVED' as requested (Top priority)
-    const [activeTab, setActiveTab] = React.useState<AlertStatus>((params.tab as AlertStatus) || 'UNPROCESSED');
+    // Default to 'UNPROCESSED' or param, but allow 'ALL'
+    const [activeTab, setActiveTab] = React.useState<AlertTab>((params.tab as AlertTab) || 'UNPROCESSED');
 
     // Effect to sync tab from navigation params if needed
     React.useEffect(() => {
         if (params.tab) {
-            setActiveTab(params.tab as AlertStatus);
+            setActiveTab(params.tab as AlertTab);
         }
     }, [params.tab]);
 
-    const currentAlerts = queue.filter(alert => alert.status === activeTab);
+    const currentAlerts = activeTab === 'ALL' ? queue : queue.filter(alert => alert.status === activeTab);
 
-    const getStatusColor = (tab: AlertStatus) => {
+    const getStatusColor = (tab: AlertTab) => {
         switch (tab) {
             case 'RECEIVED': return colors.danger;
             case 'UNPROCESSED': return colors.warning;
             case 'REPORTED': return colors.primary;
             case 'FINISHED': return colors.safe;
+            case 'ALL': return colors.text;
             default: return colors.primary;
         }
     };
@@ -41,34 +44,35 @@ export default function AlertsTabScreen() {
 
     return (
         <View style={styles.container}>
-            <View style={[styles.header, { backgroundColor: statusColor }]}>
+            <View style={[styles.header, { backgroundColor: statusColor === colors.text ? colors.primary : statusColor }]}>
                 <Text style={styles.headerTitle}>DANH SÁCH CẢNH BÁO</Text>
             </View>
 
-            {/* Tab Selector - 4 Tabs */}
+            {/* Tab Selector - 5 Tabs */}
             <View style={styles.tabContainer}>
                 {[
+                    { id: 'ALL', label: 'TẤT CẢ' },
                     { id: 'UNPROCESSED', label: 'CHỜ TIẾP NHẬN' },
                     { id: 'RECEIVED', label: 'ĐÃ TIẾP NHẬN' },
                     { id: 'REPORTED', label: 'ĐÃ BÁO CÁO' },
                     { id: 'FINISHED', label: 'KẾT THÚC' }
                 ].map((tab) => {
-                    const count = queue.filter(a => a.status === tab.id).length;
+                    const count = tab.id === 'ALL' ? queue.length : queue.filter(a => a.status === tab.id).length;
                     const isActive = activeTab === tab.id;
-                    const tabColor = getStatusColor(tab.id as AlertStatus);
+                    const tabColor = getStatusColor(tab.id as AlertTab);
 
                     return (
                         <TouchableOpacity
                             key={tab.id}
                             style={[
                                 styles.tabButton,
-                                isActive && { backgroundColor: tabColor }
+                                isActive && { backgroundColor: tab.id === 'ALL' ? colors.primary : tabColor }
                             ]}
-                            onPress={() => setActiveTab(tab.id as AlertStatus)}
+                            onPress={() => setActiveTab(tab.id as AlertTab)}
                         >
                             <Text style={[styles.tabText, isActive && styles.activeTabText]}>{tab.label}</Text>
                             {count > 0 && (
-                                <View style={[styles.tabBadge, !isActive && { backgroundColor: tabColor }]}>
+                                <View style={[styles.tabBadge, !isActive && { backgroundColor: tab.id === 'ALL' ? colors.primary : tabColor }]}>
                                     <Text style={styles.tabBadgeText}>{count}</Text>
                                 </View>
                             )}
@@ -81,128 +85,112 @@ export default function AlertsTabScreen() {
                 data={currentAlerts}
                 keyExtractor={(item) => item.id}
                 contentContainerStyle={styles.listContent}
-                renderItem={({ item }) => (
-                    <TouchableOpacity
-                        style={[styles.alertCard, { borderLeftColor: statusColor, borderColor: statusColor + '4D' }]}
-                        onPress={() => {
-                            if (activeTab === 'RECEIVED') {
-                                // 1. RECEIVED -> Navigate to Map with routing
-                                setCurrentMission(item.id);
-                                router.navigate({
-                                    pathname: '/tactical-mission',
-                                    params: { incidentId: item.id }
-                                } as any);
-                            } else if (activeTab === 'UNPROCESSED') {
-                                // 2. UNPROCESSED -> Navigate to Detail for briefing
-                                router.push({
-                                    pathname: '/alert-detail',
-                                    params: {
-                                        incidentId: item.id,
-                                        alertType: item.type,
-                                        severity: item.priority === 'CRITICAL' ? 'Khẩn cấp' : 'Bình thường',
-                                        status: item.status,
-                                        zone: item.location.zone,
-                                        building: item.location.building,
-                                        floor: item.location.floor,
-                                        note: item.description,
-                                        mediaUri: item.type === 'Xâm nhập trái phép' ? 'https://images.unsplash.com/photo-1557597774-9d2739f85a76?q=80&w=800' : 'https://images.unsplash.com/photo-1582139329536-e7284fece509?q=80&w=800'
-                                    }
-                                });
-                            } else {
-                                // 3. REPORTED/FINISHED -> Navigate to History Summary
-                                router.push({
-                                    pathname: '/alert-resolved-detail',
-                                    params: {
-                                        incidentId: item.id,
-                                        alertType: item.type,
-                                        severity: item.priority === 'CRITICAL' ? 'Khẩn cấp' : 'Bình thường',
-                                        status: item.status,
-                                        zone: item.location.zone,
-                                        building: item.location.building,
-                                        floor: item.location.floor,
-                                        note: item.description,
-                                        mediaUri: item.type === 'Xâm nhập trái phép' ? 'https://images.unsplash.com/photo-1557597774-9d2739f85a76?q=80&w=800' : 'https://images.unsplash.com/photo-1582139329536-e7284fece509?q=80&w=800'
-                                    }
-                                });
-                            }
-                        }}
-                    >
-                        <View style={styles.alertHeader}>
-                            <View style={[styles.typeBadge, { backgroundColor: statusColor + '1A' }]}>
-                                <Text style={[styles.typeBadgeText, { color: statusColor }]}>{item.type}</Text>
+                renderItem={({ item }) => {
+                    const itemColor = getStatusColor(item.status);
+                    return (
+                        <TouchableOpacity
+                            style={[styles.alertCard, { borderLeftColor: itemColor, borderColor: itemColor + '4D' }]}
+                            onPress={() => {
+                                if (item.status === 'RECEIVED') {
+                                    // 1. RECEIVED -> Navigate to Map with routing
+                                    setCurrentMission(item.id);
+                                    router.navigate({
+                                        pathname: '/tactical-mission',
+                                        params: { incidentId: item.id }
+                                    } as any);
+                                } else if (item.status === 'UNPROCESSED') {
+                                    // 2. UNPROCESSED -> Navigate to Detail for briefing
+                                    router.push({
+                                        pathname: '/alert-detail',
+                                        params: {
+                                            incidentId: item.id,
+                                            alertType: item.type,
+                                            severity: item.priority === 'CRITICAL' ? 'Khẩn cấp' : 'Bình thường',
+                                            status: item.status,
+                                            zone: item.location.zone,
+                                            building: item.location.building,
+                                            floor: item.location.floor,
+                                            note: item.description,
+                                            mediaUri: item.type === 'Xâm nhập trái phép' ? 'https://images.unsplash.com/photo-1557597774-9d2739f85a76?q=80&w=800' : 'https://images.unsplash.com/photo-1582139329536-e7284fece509?q=80&w=800'
+                                        }
+                                    });
+                                } else {
+                                    // 3. REPORTED/FINISHED -> Navigate to History Summary
+                                    router.push({
+                                        pathname: '/alert-resolved-detail',
+                                        params: {
+                                            incidentId: item.id,
+                                            alertType: item.type,
+                                            severity: item.priority === 'CRITICAL' ? 'Khẩn cấp' : 'Bình thường',
+                                            status: item.status,
+                                            zone: item.location.zone,
+                                            building: item.location.building,
+                                            floor: item.location.floor,
+                                            note: item.description,
+                                            mediaUri: item.type === 'Xâm nhập trái phép' ? 'https://images.unsplash.com/photo-1557597774-9d2739f85a76?q=80&w=800' : 'https://images.unsplash.com/photo-1582139329536-e7284fece509?q=80&w=800'
+                                        }
+                                    });
+                                }
+                            }}
+                        >
+                            <View style={styles.alertHeader}>
+                                <View style={[styles.typeBadge, { backgroundColor: itemColor + '1A' }]}>
+                                    <Text style={[styles.typeBadgeText, { color: itemColor }]}>{item.type}</Text>
+                                </View>
+                                {activeTab === 'ALL' && (
+                                    <View style={[styles.statusItemBadge, { backgroundColor: itemColor }]}>
+                                        <Text style={styles.statusItemText}>{item.status}</Text>
+                                    </View>
+                                )}
+                                <Text style={styles.timeText}>Vừa xong</Text>
                             </View>
-                            <Text style={styles.timeText}>Vừa xong</Text>
-                        </View>
-                        <Text style={styles.locationText}>
-                            {item.location.zone} • {item.location.building} • {item.location.floor}
-                        </Text>
-                        <View style={styles.noteBox}>
-                            <Text style={styles.noteText} numberOfLines={2}>{item.description || 'Không có ghi chú.'}</Text>
-                        </View>
-                        <View style={styles.actionRow}>
-                            <Text style={[styles.severityText, { color: item.priority === 'CRITICAL' ? colors.danger : colors.warning }]}>
-                                {item.priority.toUpperCase()}
+                            <Text style={styles.locationText}>
+                                {item.location.zone} • {item.location.building} • {item.location.floor}
                             </Text>
+                            <View style={styles.noteBox}>
+                                <Text style={styles.noteText} numberOfLines={2}>{item.description || 'Không có ghi chú.'}</Text>
+                            </View>
+                            <View style={styles.actionRow}>
+                                <Text style={[styles.severityText, { color: item.priority === 'CRITICAL' ? colors.danger : colors.warning }]}>
+                                    {item.priority.toUpperCase()}
+                                </Text>
 
-                            {activeTab === 'RECEIVED' && (
-                                <View style={styles.buttonGroup}>
-                                    <TouchableOpacity
-                                        style={styles.secondaryButton}
-                                        onPress={(e) => {
-                                            e.stopPropagation();
-                                            router.push({
-                                                pathname: '/alert-detail',
-                                                params: {
-                                                    incidentId: item.id,
-                                                    alertType: item.type,
-                                                    severity: item.priority === 'CRITICAL' ? 'Khẩn cấp' : 'Bình thường',
-                                                    status: item.status,
-                                                    zone: item.location.zone,
-                                                    building: item.location.building,
-                                                    floor: item.location.floor,
-                                                    note: item.description,
-                                                    mediaUri: item.type === 'Xâm nhập trái phép' ? 'https://images.unsplash.com/photo-1557597774-9d2739f85a76?q=80&w=800' : 'https://images.unsplash.com/photo-1582139329536-e7284fece509?q=80&w=800'
-                                                }
-                                            });
-                                        }}
-                                    >
-                                        <Ionicons name="information-circle-outline" size={16} color={colors.text} />
-                                        <Text style={styles.secondaryButtonText}>CHI TIẾT</Text>
-                                    </TouchableOpacity>
+                                {item.status === 'RECEIVED' && (
+                                    <View style={styles.buttonGroup}>
+                                        <TouchableOpacity
+                                            style={[styles.acceptButton, { backgroundColor: itemColor }]}
+                                            onPress={(e) => {
+                                                e.stopPropagation();
+                                                setCurrentMission(item.id);
+                                                router.navigate({
+                                                    pathname: '/tactical-mission',
+                                                    params: { incidentId: item.id }
+                                                } as any);
+                                            }}
+                                        >
+                                            <Text style={styles.acceptButtonText}>ĐẾN DẪN ĐƯỜNG</Text>
+                                            <Ionicons name="navigate" size={16} color="white" />
+                                        </TouchableOpacity>
+                                    </View>
+                                )}
 
-                                    <TouchableOpacity
-                                        style={[styles.acceptButton, { backgroundColor: statusColor }]}
-                                        onPress={(e) => {
-                                            e.stopPropagation();
-                                            setCurrentMission(item.id);
-                                            router.navigate({
-                                                pathname: '/tactical-mission',
-                                                params: { incidentId: item.id }
-                                            } as any);
-                                        }}
-                                    >
-                                        <Text style={styles.acceptButtonText}>ĐẾN DẪN ĐƯỜNG</Text>
-                                        <Ionicons name="navigate" size={16} color="white" />
-                                    </TouchableOpacity>
-                                </View>
-                            )}
+                                {item.status === 'UNPROCESSED' && (
+                                    <View style={[styles.acceptButton, { backgroundColor: itemColor }]}>
+                                        <Text style={styles.acceptButtonText}>CHI TIẾT</Text>
+                                        <Ionicons name="eye" size={16} color="white" />
+                                    </View>
+                                )}
 
-                            {activeTab === 'UNPROCESSED' && (
-                                <View style={[styles.acceptButton, { backgroundColor: statusColor }]}>
-                                    <Text style={styles.acceptButtonText}>CHI TIẾT</Text>
-                                    <Ionicons name="eye" size={16} color="white" />
-                                </View>
-                            )}
-
-                            {(activeTab === 'REPORTED' || activeTab === 'FINISHED') && (
-                                <View style={[styles.acceptButton, { backgroundColor: statusColor }]}>
-                                    <Text style={styles.acceptButtonText}>XEM BÁO CÁO</Text>
-                                    <Ionicons name="document-text" size={16} color="white" />
-                                </View>
-                            )}
-                        </View>
-                    </TouchableOpacity>
-                )}
+                                {(item.status === 'REPORTED' || item.status === 'FINISHED') && (
+                                    <View style={[styles.acceptButton, { backgroundColor: itemColor }]}>
+                                        <Text style={styles.acceptButtonText}>XEM BÁO CÁO</Text>
+                                        <Ionicons name="document-text" size={16} color="white" />
+                                    </View>
+                                )}
+                            </View>
+                        </TouchableOpacity>
+                    );
+                }}
             />
         </View>
     );
@@ -359,6 +347,17 @@ const dynamicStyles = (colors: any) => StyleSheet.create({
     acceptButtonText: {
         color: 'white',
         fontSize: 12,
+        fontWeight: 'bold',
+    },
+    statusItemBadge: {
+        paddingHorizontal: 8,
+        paddingVertical: 2,
+        borderRadius: 4,
+        marginLeft: 8,
+    },
+    statusItemText: {
+        color: 'white',
+        fontSize: 10,
         fontWeight: 'bold',
     },
 });

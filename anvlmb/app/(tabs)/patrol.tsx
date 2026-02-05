@@ -41,16 +41,10 @@ export default function PatrolRouteScreen() {
     }, [dayRoutes]);
 
     const handleRoutePress = (item: any) => {
-        if (item.status === 'HOÀN THÀNH') {
+        if (item.status === 'HOÀN THÀNH' || item.status === 'ĐÃ BÁO CÁO') {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
             router.push({
                 pathname: '/patrol-report',
-                params: { routeId: item.id, routeName: item.name }
-            });
-        } else if (item.status === 'ĐÃ BÁO CÁO') {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-            router.push({
-                pathname: '/patrol-history-detail',
                 params: { routeId: item.id, routeName: item.name }
             });
         } else if (item.status === 'ĐANG THỰC HIỆN') {

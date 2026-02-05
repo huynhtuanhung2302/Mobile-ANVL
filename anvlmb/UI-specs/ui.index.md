@@ -45,10 +45,10 @@ graph TD
     Patrol -- "Bắt đầu tuyến" --> PDetail[3.3. Chi tiết Tuyến]
     PDetail -- "Báo cáo Sự cố" --> Occ[2.6. Báo cáo Sự cố/Sự vụ]
     Occ -- "Submit" --> PDetail
-    PDetail -- "Hoàn thành lộ trình" --> PReport[3.5. Báo cáo Kết thúc]
+    PDetail -- "Hoàn thành lộ trình" --> PReport[3.5 & 3.6. Báo cáo & Lịch sử]
     PReport -- "Gửi & Đóng ca" --> Dash
-    Patrol -- "Tab Hoàn thành" --> PHistory[3.6. Lịch sử Tuần tra]
-    PHistory -- "Chi tiết Sự cố" --> PInc[3.7. Tổng hợp Sự cố]
+    Patrol -- "Tab Đã báo cáo" --> PReport
+    PReport -- "Chi tiết Sự cố" --> PInc[3.7. Tổng hợp Sự cố]
 ```
 
 ## 📱 Đặc tả Giao diện theo Màn hình (Screen UI Specs)
@@ -68,8 +68,7 @@ graph TD
 
 ### Module 3: Vận hành & Hậu cần (MVP)
 - [UI 3.3: Màn hình Tuyến tuần tra (Danh sách/Chi tiết)](./ui.3.3.patrol-route.md)
-- [UI 3.5: Màn hình Báo cáo Kết thúc Ca](./ui.3.5.patrol-report.md)
-- [UI 3.6: Màn hình Tóm tắt Lịch sử Tuần tra](./ui.3.6.patrol-history.md)
+- [UI 3.5 & 3.6: Màn hình Báo cáo & Lịch sử Tuần tra (Unified Mode)](./ui.3.5.patrol-report.md)
 - [UI 3.7: Màn hình Tổng hợp Sự cố Tuần tra](./ui.3.7.patrol-incidents-summary.md)
 
 ### 📁 Các tính năng trì hoãn (Future Scope)

@@ -32,9 +32,9 @@ ANVL Mobile là ứng dụng di động dành cho nhân viên an ninh hiện tr�
 - **Phản ứng linh hoạt**: Cho phép báo cáo sự cố phát sinh ngay trong khi đang xem lộ trình tuần tra.
 - **Navigation Payload:**
     - `patrol.tsx` -> `patrol-details.tsx`: `{ routeId, routeName }`.
-    - `patrol.tsx` -> `patrol-history-detail.tsx`: `{ routeId, routeName }` (Chỉ dùng cho tab Hoàn thành).
-    - `patrol-history-detail.tsx` -> `patrol-incidents-summary.tsx`: `{ routeId, routeName }`.
-    - `patrol-details.tsx` -> `patrol-report.tsx`: `{ total, completed, incidents, duration }`.
+    - `patrol.tsx` -> `patrol-report.tsx`: `{ routeId, routeName }` (Hỗ trợ cả Hoàn thành & Đã báo cáo).
+    - `patrol-report.tsx` -> `patrol-incidents-summary.tsx`: `{ routeName }`.
+    - `patrol-details.tsx` -> `patrol-report.tsx`: `{ routeId, distance, updates, incidents, duration }`.
 - Báo cáo hư hỏng thiết bị (QR Code support) cho hạ tầng kỹ thuật.
 - Đồng bộ 100% Online với trung tâm chỉ huy (TTCH).
 
@@ -76,6 +76,7 @@ graph TD
     O1 & O2 --> P2
     P2 --> P3[3. Hoàn thành Lộ trình]
     P3 --> P4[4. Tổng kết & Đóng ca]
+    P4 --> P5[5. Lịch sử & Đối soát]
 ```
 
 ## 5. Luồng Người dùng Trọng tâm
